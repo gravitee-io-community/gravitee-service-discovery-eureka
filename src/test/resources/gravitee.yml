@@ -1,0 +1,4 @@
+service-discovery:
+  eureka:
+    serviceUrl:
+      default: https://myeureka-server.foo.com/eureka
