@@ -18,6 +18,7 @@ package io.gravitee.discovery.eureka;
 import com.netflix.appinfo.InstanceInfo;
 import io.gravitee.discovery.api.event.Event;
 import io.gravitee.discovery.api.event.EventType;
+import io.gravitee.discovery.api.service.AbstractServiceDiscovery;
 import io.gravitee.discovery.api.service.Service;
 import io.gravitee.discovery.eureka.service.EurekaService;
 import org.junit.Test;

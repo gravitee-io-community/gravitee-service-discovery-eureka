@@ -19,6 +19,7 @@ import com.netflix.discovery.CacheRefreshedEvent;
 import com.netflix.discovery.DiscoveryClient;
 import io.gravitee.discovery.api.event.Event;
 import io.gravitee.discovery.api.event.Handler;
+import io.gravitee.discovery.api.service.AbstractServiceDiscovery;
 import io.gravitee.discovery.eureka.configuration.EurekaServiceDiscoveryConfiguration;
 import io.gravitee.discovery.eureka.service.EurekaService;
 import io.gravitee.discovery.eureka.service.EurekaServiceResolver;
