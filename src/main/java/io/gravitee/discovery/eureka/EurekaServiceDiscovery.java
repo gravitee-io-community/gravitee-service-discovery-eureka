@@ -15,26 +15,34 @@
  */
 package io.gravitee.discovery.eureka;
 
+import com.netflix.appinfo.ApplicationInfoManager;
+import com.netflix.appinfo.InstanceInfo;
+import com.netflix.appinfo.MyDataCenterInstanceConfig;
+import com.netflix.appinfo.providers.EurekaConfigBasedInstanceInfoProvider;
 import com.netflix.discovery.CacheRefreshedEvent;
 import com.netflix.discovery.DiscoveryClient;
+import com.netflix.discovery.EurekaClientConfig;
+import com.netflix.discovery.shared.transport.EurekaTransportConfig;
 import io.gravitee.discovery.api.event.Event;
 import io.gravitee.discovery.api.event.Handler;
 import io.gravitee.discovery.api.service.AbstractServiceDiscovery;
 import io.gravitee.discovery.eureka.configuration.EurekaServiceDiscoveryConfiguration;
 import io.gravitee.discovery.eureka.service.EurekaService;
 import io.gravitee.discovery.eureka.service.EurekaServiceResolver;
+import io.gravitee.discovery.eureka.spring.EurekaClientConfigBean;
+import io.gravitee.discovery.eureka.spring.EurekaTransportConfigBean;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.ConfigurableEnvironment;
 
 import java.util.List;
 
-public class EurekaServiceDiscovery extends AbstractServiceDiscovery<EurekaService> {
+public class EurekaServiceDiscovery extends AbstractServiceDiscovery<EurekaService> implements InitializingBean {
 
   @Autowired
+  private ConfigurableEnvironment env;
   private DiscoveryClient eurekaClient;
-
-  @Autowired
   private EurekaServiceResolver eurekaServiceResolver;
-
   private final EurekaServiceDiscoveryConfiguration configuration;
 
   public EurekaServiceDiscovery(EurekaServiceDiscoveryConfiguration configuration) {
@@ -75,5 +83,16 @@ public class EurekaServiceDiscovery extends AbstractServiceDiscovery<EurekaServi
 
   @Override
   public void stop() throws Exception {
+    eurekaClient.shutdown();
+  }
+
+  @Override
+  public void afterPropertiesSet() throws Exception {
+    MyDataCenterInstanceConfig instanceConfig = new MyDataCenterInstanceConfig();
+    InstanceInfo instanceInfo = new EurekaConfigBasedInstanceInfoProvider(instanceConfig).get();
+    EurekaTransportConfig eurekaTransportConfig = new EurekaTransportConfigBean(env);
+    EurekaClientConfig eurekaClientConfig = new EurekaClientConfigBean(env, eurekaTransportConfig);
+    eurekaClient =  new DiscoveryClient(new ApplicationInfoManager(instanceConfig, instanceInfo), eurekaClientConfig);
+    eurekaServiceResolver = new EurekaServiceResolver(eurekaClient);
   }
 }

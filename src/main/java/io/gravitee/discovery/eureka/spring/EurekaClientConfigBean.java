@@ -18,7 +18,6 @@ package io.gravitee.discovery.eureka.spring;
 import com.netflix.appinfo.EurekaAccept;
 import com.netflix.discovery.EurekaClientConfig;
 import com.netflix.discovery.shared.transport.EurekaTransportConfig;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.ConfigurableEnvironment;
 
 import java.util.ArrayList;
@@ -31,132 +30,91 @@ public class EurekaClientConfigBean implements EurekaClientConfig {
 
     private final ConfigurableEnvironment environment;
 
-    @Value("${service-discovery.eureka.client.refresh.interval:30}")
     private int registryFetchIntervalSeconds;
-
-    @Value("${service-discovery.eureka.appinfo.replicate.interval:30}")
     private int instanceInfoReplicationIntervalSeconds;
-
-    @Value("${service-discovery.eureka.appinfo.initial.replicate.time:40}")
     private int initialInstanceInfoReplicationIntervalSeconds = 40;
-
-    @Value("${service-discovery.eureka.serviceUrlPollIntervalMs:300}")
     private int eurekaServiceUrlPollIntervalSeconds;
-
-    @Value("${service-discovery.eureka.eurekaServer.proxyPort:#{null}}")
     private String proxyPort;
-
-    @Value("${service-discovery.eureka.eurekaServer.proxyHost:#{null}}")
     private String proxyHost;
-
-    @Value("${service-discovery.eureka.eurekaServer.proxyUserName:#{null}}")
     private String proxyUserName;
-
-    @Value("${service-discovery.eureka.eurekaServer.proxyPassword:#{null}}")
     private String proxyPassword;
-
-    @Value("${service-discovery.eureka.eurekaServer.readTimeout:8}")
     private int eurekaServerReadTimeoutSeconds;
-
-    @Value("${service-discovery.eureka.eurekaServer.connectTimeout:5}")
     private int eurekaServerConnectTimeoutSeconds;
-
-    @Value("${service-discovery.eureka.eurekaServer.backupregistry:#{null}}")
     private String backupRegistryImpl;
-
-    @Value("${service-discovery.eureka.eurekaServer.maxTotalConnections:200}")
     private int eurekaServerTotalConnections;
-
-    @Value("${service-discovery.eureka.eurekaServer.maxConnectionsPerHost:50}")
     private int eurekaServerTotalConnectionsPerHost;
-
-    @Value("${service-discovery.eureka.eurekaServer.context:#{null}}")
     private String eurekaServerURLContext;
-
-    @Value("${service-discovery.eureka.eurekaServer.port:#{null}}")
     private String eurekaServerPort;
-
-    @Value("${service-discovery.eureka.eurekaServer.domainName:#{null}}")
     private String eurekaServerDNSName;
-
-    @Value("${service-discovery.eureka.region:us-east-1}")
     private String region;
-
-    @Value("${service-discovery.eureka.eurekaserver.connectionIdleTimeoutInSeconds:30}")
     private int eurekaConnectionIdleTimeoutSeconds;
-
-    @Value("${service-discovery.eureka.registryRefreshSingleVipAddress:#{null}}")
     private String registryRefreshSingleVipAddress;
-
-    @Value("${service-discovery.eureka.client.heartbeat.threadPoolSize:5}")
     private int heartbeatExecutorThreadPoolSize;
-
-    @Value("${service-discovery.eureka.client.heartbeat.exponentialBackOffBound:10}")
     private int heartbeatExecutorExponentialBackOffBound;
-
-    @Value("${service-discovery.eureka.client.cacheRefresh.threadPoolSize:5}")
     private int cacheRefreshExecutorThreadPoolSize;
-
-    @Value("${service-discovery.eureka.client.cacheRefresh.exponentialBackOffBound:10}")
     private int cacheRefreshExecutorExponentialBackOffBound;
-
-    @Value("${service-discovery.eureka.eurekaServer.gzipContent:true}")
     private boolean gZipContent;
-
-    @Value("${service-discovery.eureka.shouldUseDns:false}")
     private boolean useDnsForFetchingServiceUrls;
-
     private boolean registerWithEureka = false;
-
-    @Value("${service-discovery.eureka.preferSameZone:true}")
     private boolean preferSameZoneEureka;
-
-    @Value("${service-discovery.eureka.printDeltaFullDiff:false}")
     private boolean logDeltaDiff;
-
-    @Value("${service-discovery.eureka.disableDelta:false}")
     private boolean disableDelta;
-
-    @Value("${service-discovery.eureka.fetchRemoteRegionsRegistry:#{null}}")
     private String fetchRemoteRegionsRegistry;
-
-    @Value("${service-discovery.eureka.shouldFilterOnlyUpInstances:true}")
     private boolean filterOnlyUpInstances;
-
-    @Value("${service-discovery.eureka.shouldFetchRegistry:true}")
     private boolean fetchRegistry;
-
-    @Value("${service-discovery.eureka.dollarReplacement:_-}")
     private String dollarReplacement;
-
-    @Value("${service-discovery.eureka.escapeCharReplacement:__}")
     private String escapeCharReplacement;
-
-    @Value("${service-discovery.eureka.allowRedirects:false}")
     private boolean allowRedirects;
-
-    @Value("${service-discovery.eureka.shouldOnDemandUpdateStatusChange:true}")
     private boolean onDemandUpdateStatusChange;
-
-    @Value("${service-discovery.eureka.encoderName:#{null}}")
     private String encoderName;
-
-    @Value("${service-discovery.eureka.decoderName:#{null}}")
     private String decoderName;
-
-    @Value("${service-discovery.eureka.clientDataAccept:#{null}}")
     private String clientDataAccept;
-
-    @Value("${service-discovery.eureka.shouldUnregisterOnShutdown:true}")
     private boolean shouldUnregisterOnShutdown;
-
-    @Value("${service-discovery.eureka.shouldEnforceRegistrationAtInit:false}")
     private boolean shouldEnforceRegistrationAtInit;
-
 
     public EurekaClientConfigBean(ConfigurableEnvironment environment, EurekaTransportConfig eurekaTransportConfigBean) {
         this.environment = environment;
         this.transportConfig = eurekaTransportConfigBean;
+        this.registryFetchIntervalSeconds = Integer.parseInt(environment.getProperty("service-discovery.eureka.client.refresh.interval", "30"));
+        this.instanceInfoReplicationIntervalSeconds = Integer.parseInt(environment.getProperty("service-discovery.eureka.appinfo.replicate.interval", "30"));
+        this.initialInstanceInfoReplicationIntervalSeconds = Integer.parseInt(environment.getProperty("service-discovery.eureka.appinfo.initial.replicate.time", "40"));
+        this.eurekaServiceUrlPollIntervalSeconds = Integer.parseInt(environment.getProperty("service-discovery.eureka.serviceUrlPollIntervalMs", "300"));
+        this.proxyPort = environment.getProperty("service-discovery.eureka.eurekaServer.proxyPort");
+        this.proxyHost = environment.getProperty("service-discovery.eureka.eurekaServer.proxyHost");
+        this.proxyUserName = environment.getProperty("service-discovery.eureka.eurekaServer.proxyUserName");
+        this.proxyPassword = environment.getProperty("service-discovery.eureka.eurekaServer.proxyPassword");
+        this.eurekaServerReadTimeoutSeconds = Integer.parseInt(environment.getProperty("service-discovery.eureka.eurekaServer.readTimeout", "8"));
+        this.eurekaServerConnectTimeoutSeconds = Integer.parseInt(environment.getProperty("service-discovery.eureka.eurekaServer.connectTimeout", "5"));
+        this.backupRegistryImpl = environment.getProperty("service-discovery.eureka.eurekaServer.backupregistry");
+        this.eurekaServerTotalConnections = Integer.parseInt(environment.getProperty("service-discovery.eureka.eurekaServer.maxTotalConnections", "200"));
+        this.eurekaServerTotalConnectionsPerHost = Integer.parseInt(environment.getProperty("service-discovery.eureka.eurekaServer.maxConnectionsPerHost", "50"));
+        this.eurekaServerURLContext = environment.getProperty("service-discovery.eureka.eurekaServer.context");
+        this.eurekaServerPort =  environment.getProperty("service-discovery.eureka.eurekaServer.port");
+        this.eurekaServerDNSName = environment.getProperty("service-discovery.eureka.eurekaServer.domainName");
+        this.region = environment.getProperty("service-discovery.eureka.region", "us-east-1");
+        this.eurekaConnectionIdleTimeoutSeconds = Integer.parseInt(environment.getProperty("service-discovery.eureka.eurekaserver.connectionIdleTimeoutInSeconds", "30"));
+        this.registryRefreshSingleVipAddress = environment.getProperty("service-discovery.eureka.registryRefreshSingleVipAddress");
+        this.heartbeatExecutorThreadPoolSize = Integer.parseInt(environment.getProperty("service-discovery.eureka.client.heartbeat.threadPoolSize", "5"));
+        this.heartbeatExecutorExponentialBackOffBound = Integer.parseInt(environment.getProperty("service-discovery.eureka.client.heartbeat.exponentialBackOffBound", "10"));
+        this.cacheRefreshExecutorThreadPoolSize = Integer.parseInt(environment.getProperty("service-discovery.eureka.client.cacheRefresh.threadPoolSize", "5"));
+        this.cacheRefreshExecutorExponentialBackOffBound = Integer.parseInt(environment.getProperty("service-discovery.eureka.client.cacheRefresh.exponentialBackOffBound", "10"));
+        this.gZipContent = Boolean.parseBoolean(environment.getProperty("service-discovery.eureka.eurekaServer.gzipContent", "true"));
+        this.useDnsForFetchingServiceUrls = Boolean.parseBoolean(environment.getProperty("service-discovery.eureka.shouldUseDns", "false"));
+        this.preferSameZoneEureka = Boolean.parseBoolean(environment.getProperty("service-discovery.eureka.preferSameZone", "true"));
+        this.logDeltaDiff = Boolean.parseBoolean(environment.getProperty("service-discovery.eureka.printDeltaFullDiff", "false"));
+        this.disableDelta = Boolean.parseBoolean(environment.getProperty("service-discovery.eureka.disableDelta", "false"));
+        this.fetchRemoteRegionsRegistry = environment.getProperty("service-discovery.eureka.fetchRemoteRegionsRegistry");
+        this.filterOnlyUpInstances = Boolean.parseBoolean(environment.getProperty("service-discovery.eureka.shouldFilterOnlyUpInstances", "true"));
+        this.fetchRegistry = Boolean.parseBoolean(environment.getProperty("service-discovery.eureka.shouldFetchRegistry", "true"));
+        this.dollarReplacement = environment.getProperty("service-discovery.eureka.dollarReplacement", "_-");
+        this.escapeCharReplacement = environment.getProperty("service-discovery.eureka.escapeCharReplacement", "__");
+        this.allowRedirects = Boolean.parseBoolean(environment.getProperty("service-discovery.eureka.allowRedirects", "false"));
+        this.onDemandUpdateStatusChange = Boolean.parseBoolean(environment.getProperty("service-discovery.eureka.shouldOnDemandUpdateStatusChange", "true"));
+        this.encoderName = environment.getProperty("service-discovery.eureka.encoderName");
+        this.decoderName = environment.getProperty("service-discovery.eureka.decoderName");
+        this.clientDataAccept = environment.getProperty("service-discovery.eureka.clientDataAccept");
+        this.shouldUnregisterOnShutdown = Boolean.parseBoolean(environment.getProperty("service-discovery.eureka.shouldUnregisterOnShutdown", "true"));
+        this.shouldEnforceRegistrationAtInit = Boolean.parseBoolean(environment.getProperty("service-discovery.eureka.shouldEnforceRegistrationAtInit", "false"));
     }
 
     public int getRegistryFetchIntervalSeconds() {

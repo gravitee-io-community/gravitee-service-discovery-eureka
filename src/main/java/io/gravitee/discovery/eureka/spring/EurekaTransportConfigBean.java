@@ -16,42 +16,35 @@
 package io.gravitee.discovery.eureka.spring;
 
 import com.netflix.discovery.shared.transport.EurekaTransportConfig;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.ConfigurableEnvironment;
 
 public class EurekaTransportConfigBean implements EurekaTransportConfig {
 
-    @Value("${service-discovery.eureka.transport.sessionedClientReconnectIntervalSeconds:0}")
     private int sessionedClientReconnectIntervalSeconds;
-
-    @Value("${service-discovery.eureka.transport.retryableClientQuarantineRefreshPercentage:0.66}")
     private double retryableClientQuarantineRefreshPercentage;
-
-    @Value("${service-discovery.eureka.transport.applicationsResolverDataStalenessThresholdSeconds:300}")
     private int applicationsResolverDataStalenessThresholdSeconds;
-
-    @Value("${service-discovery.eureka.transport.applicationsResolverUseIp:false}")
     private boolean applicationsResolverUseIp;
-
-    @Value("${service-discovery.eureka.transport.asyncResolverRefreshIntervalMs:300000}")
     private int asyncResolverRefreshIntervalMs;
-
-    @Value("${service-discovery.eureka.transport.asyncResolverWarmupTimeoutMs:5000}")
     private int asyncResolverWarmupTimeoutMs;
-
-    @Value("${service-discovery.eureka.transport.asyncExecutorThreadPoolSize:5}")
     private int asyncExecutorThreadPoolSize;
-
-    @Value("${service-discovery.eureka.transport.writeClusterVip:#{null}}")
     private String writeClusterVip;
-
-    @Value("${service-discovery.eureka.transport.readClusterVip:#{null}}")
     private String readClusterVip;
-
-    @Value("${service-discovery.eureka.transport.bootstrapResolverStrategy:#{null}}")
     private String bootstrapResolverStrategy;
-
-    @Value("${service-discovery.eureka.transport.useBootstrapResolverForQuery:true}")
     private boolean useBootstrapResolverForQuery;
+
+    public EurekaTransportConfigBean(ConfigurableEnvironment env) {
+        this.sessionedClientReconnectIntervalSeconds = Integer.parseInt(env.getProperty("service-discovery.eureka.transport.sessionedClientReconnectIntervalSeconds", "0"));
+        this.retryableClientQuarantineRefreshPercentage = Double.parseDouble(env.getProperty("service-discovery.eureka.transport.retryableClientQuarantineRefreshPercentage", "0.66"));
+        this.applicationsResolverDataStalenessThresholdSeconds = Integer.parseInt(env.getProperty("service-discovery.eureka.transport.applicationsResolverDataStalenessThresholdSeconds", "300"));
+        this.applicationsResolverUseIp = Boolean.parseBoolean(env.getProperty("service-discovery.eureka.transport.applicationsResolverUseIp", "false"));
+        this.asyncResolverRefreshIntervalMs = Integer.parseInt(env.getProperty("service-discovery.eureka.transport.asyncResolverRefreshIntervalMs", "300000"));
+        this.asyncResolverWarmupTimeoutMs = Integer.parseInt(env.getProperty("service-discovery.eureka.transport.asyncResolverWarmupTimeoutMs", "5000"));
+        this.asyncExecutorThreadPoolSize = Integer.parseInt(env.getProperty("service-discovery.eureka.transport.asyncExecutorThreadPoolSize", "5"));
+        this.writeClusterVip = env.getProperty("service-discovery.eureka.transport.writeClusterVip");
+        this.readClusterVip = env.getProperty("service-discovery.eureka.transport.readClusterVip");
+        this.bootstrapResolverStrategy = env.getProperty("service-discovery.eureka.transport.bootstrapResolverStrategy");
+        this.useBootstrapResolverForQuery = Boolean.parseBoolean(env.getProperty("service-discovery.eureka.transport.useBootstrapResolverForQuery", "true"));
+    }
 
     @Override
     public int getSessionedClientReconnectIntervalSeconds() {
