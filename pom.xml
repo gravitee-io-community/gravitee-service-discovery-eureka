@@ -36,7 +36,7 @@
         <gravitee-common.version>1.14.0</gravitee-common.version>
         <gravitee-service-discovery-api.version>1.1.0</gravitee-service-discovery-api.version>
         <assertj-core.version>3.8.0</assertj-core.version>
-        <eureka.version>1.8.8</eureka.version>
+        <eureka.version>1.10.17</eureka.version>
     </properties>
 
     <dependencies>
