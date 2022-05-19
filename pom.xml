@@ -29,7 +29,7 @@
 
     <groupId>io.gravitee.discovery</groupId>
     <artifactId>gravitee-service-discovery-eureka</artifactId>
-    <version>1.1.2-SNAPSHOT</version>
+    <version>1.2.0</version>
     <name>Gravitee.io APIM - Gateway - Services - Endpoints Discovery - Eureka</name>
 
     <properties>
