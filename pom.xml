@@ -29,12 +29,12 @@
 
     <groupId>io.gravitee.discovery</groupId>
     <artifactId>gravitee-service-discovery-eureka</artifactId>
-    <version>1.2.0-SNAPSHOT</version>
+    <version>1.1.2-SNAPSHOT</version>
     <name>Gravitee.io APIM - Gateway - Services - Endpoints Discovery - Eureka</name>
 
     <properties>
-        <gravitee-common.version>1.14.0</gravitee-common.version>
-        <gravitee-service-discovery-api.version>1.1.0</gravitee-service-discovery-api.version>
+        <gravitee-common.version>1.17.1</gravitee-common.version>
+        <gravitee-service-discovery-api.version>1.1.1</gravitee-service-discovery-api.version>
         <assertj-core.version>3.8.0</assertj-core.version>
         <eureka.version>1.8.8</eureka.version>
     </properties>
