@@ -53,7 +53,7 @@ public class EurekaTransportConfigBean implements EurekaTransportConfig {
 
     @Override
     public double getRetryableClientQuarantineRefreshPercentage() {
-        return 0.66;
+        return retryableClientQuarantineRefreshPercentage;
     }
 
     @Override

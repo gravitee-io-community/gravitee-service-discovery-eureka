@@ -32,9 +32,9 @@ import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -64,6 +64,7 @@ public class EurekaServiceDiscoveryTest {
     configuration.setApplication("APP");
     eurekaServiceDiscovery = new EurekaServiceDiscovery(configuration);
     MockitoAnnotations.initMocks(this);
+    ReflectionTestUtils.setField(eurekaServiceDiscovery, "client", discoveryClient);
   }
 
   @Test
