@@ -21,8 +21,8 @@ import com.netflix.appinfo.MyDataCenterInstanceConfig;
 import com.netflix.appinfo.providers.EurekaConfigBasedInstanceInfoProvider;
 import com.netflix.discovery.CacheRefreshedEvent;
 import com.netflix.discovery.DiscoveryClient;
-import com.netflix.discovery.EurekaClientConfig;
-import com.netflix.discovery.shared.transport.EurekaTransportConfig;
+import com.netflix.discovery.EurekaEvent;
+import com.netflix.discovery.EurekaEventListener;
 import io.gravitee.discovery.api.event.Event;
 import io.gravitee.discovery.api.event.Handler;
 import io.gravitee.discovery.api.service.AbstractServiceDiscovery;
@@ -39,60 +39,65 @@ import java.util.List;
 
 public class EurekaServiceDiscovery extends AbstractServiceDiscovery<EurekaService> implements InitializingBean {
 
-  @Autowired
-  private ConfigurableEnvironment env;
-  private DiscoveryClient eurekaClient;
-  private EurekaServiceResolver eurekaServiceResolver;
-  private final EurekaServiceDiscoveryConfiguration configuration;
+  private static volatile DiscoveryClient client;
 
-  public EurekaServiceDiscovery(EurekaServiceDiscoveryConfiguration configuration) {
+  private EurekaEventListener listener;
+  private EurekaServiceResolver resolver;
+  private EurekaServiceDiscoveryConfiguration configuration;
+
+  @Autowired
+  private ConfigurableEnvironment environment;
+
+  public EurekaServiceDiscovery(final EurekaServiceDiscoveryConfiguration configuration) {
     this.configuration = configuration;
   }
 
   @Override
-  public void listen(Handler<Event> handler) {
+  public void listen(final Handler<Event> handler) {
     refresh(handler);
-    eurekaClient.registerEventListener(eurekaEvent -> {
-      if (eurekaEvent instanceof CacheRefreshedEvent) {
-        refresh(handler);
+    client.registerEventListener(listener = new EurekaEventListener() {
+      @Override
+      public void onEvent(final EurekaEvent event) {
+        if (event instanceof CacheRefreshedEvent) {
+          refresh(handler);
+        }
       }
     });
   }
 
-  private void refresh(Handler<Event> handler) {
-    List<EurekaService> servicesUp = eurekaServiceResolver.getServicesUpByApplicationName(configuration.getApplication());
-    for (EurekaService serviceUp : servicesUp) {
+  private void refresh(final Handler<Event> handler) {
+    List<EurekaService> servicesUp = resolver.getServicesUpByApplicationName(configuration.getApplication());
+    servicesUp.forEach((serviceUp) -> {
       EurekaService oldService = getService(serviceUp::equals);
-
       if (oldService == null) {
         handler.handle(registerEndpoint(serviceUp));
-      } else {
-        // Update it only if target has been changed
-        if (!serviceUp.isTargetEquals(oldService)) {
+      } else if (!serviceUp.isTargetEquals(oldService)) {
           handler.handle(unregisterEndpoint(oldService));
           handler.handle(registerEndpoint(serviceUp));
-        }
       }
-    }
-
-    List<EurekaService> servicesDown = getServices(s -> !servicesUp.contains(s));
-    for (EurekaService serviceDown:servicesDown) {
+    });
+    List<EurekaService> servicesDown = getServices((s) -> !servicesUp.contains(s));
+    servicesDown.forEach((serviceDown) -> {
       handler.handle(unregisterEndpoint(serviceDown));
-    }
+    });
   }
 
   @Override
   public void stop() throws Exception {
-    eurekaClient.shutdown();
+    client.unregisterEventListener(listener);
   }
 
   @Override
   public void afterPropertiesSet() throws Exception {
-    MyDataCenterInstanceConfig instanceConfig = new MyDataCenterInstanceConfig();
-    InstanceInfo instanceInfo = new EurekaConfigBasedInstanceInfoProvider(instanceConfig).get();
-    EurekaTransportConfig eurekaTransportConfig = new EurekaTransportConfigBean(env);
-    EurekaClientConfig eurekaClientConfig = new EurekaClientConfigBean(env, eurekaTransportConfig);
-    eurekaClient =  new DiscoveryClient(new ApplicationInfoManager(instanceConfig, instanceInfo), eurekaClientConfig);
-    eurekaServiceResolver = new EurekaServiceResolver(eurekaClient);
+    if (client == null) {
+      synchronized (this) {
+        if (client == null) {
+          MyDataCenterInstanceConfig instanceConfig = new MyDataCenterInstanceConfig();
+          InstanceInfo instanceInfo = new EurekaConfigBasedInstanceInfoProvider(instanceConfig).get();
+          client = new DiscoveryClient(new ApplicationInfoManager(instanceConfig, instanceInfo), new EurekaClientConfigBean(environment, new EurekaTransportConfigBean(environment)));
+        }
+      }
+    }
+    resolver = new EurekaServiceResolver(client);
   }
 }
