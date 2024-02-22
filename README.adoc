@@ -15,7 +15,7 @@ Once built, a plugin archive file is generated in : target/gravitee-service-disc
 
 == Deploy
 
-Just unzip the plugin archive in your gravitee gateway plugin workspace ( default is : ${node.home}/plugins )
+Put the plugin archive in your gravitee gateway plugin workspace ( default is : ${gravitee.home}/plugins )
 
 == Configuration
 
