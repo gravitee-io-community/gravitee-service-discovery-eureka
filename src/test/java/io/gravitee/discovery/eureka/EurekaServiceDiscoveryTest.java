@@ -27,11 +27,13 @@ import io.gravitee.discovery.eureka.service.EurekaService;
 import io.gravitee.discovery.eureka.service.EurekaServiceResolver;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.ArrayList;
@@ -42,6 +44,7 @@ import static org.assertj.core.api.Assertions.fail;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
+@RunWith(MockitoJUnitRunner.class)
 public class EurekaServiceDiscoveryTest {
 
   @Mock
